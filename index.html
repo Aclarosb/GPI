@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Componentes</title>
+    <script>
+        async function generateComponent(event) {
+            event.preventDefault();
+            const componentDetails = document.getElementById('componentDetails').value;
+
+            const response = await fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ component_details: componentDetails })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const iframe = document.getElementById('preview');
+                iframe.src = `/${data.file_path}`;
+            } else {
+                alert('Error al generar el componente.');
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Generador de Componentes</h1>
+    <form onsubmit="generateComponent(event)">
+        <label for="componentDetails">Detalles del Componente:</label><br>
+        <textarea id="componentDetails" name="componentDetails" rows="4" cols="50" required></textarea><br><br>
+        <button type="submit">Generar Componente</button>
+    </form>
+    <h2>Vista Previa:</h2>
+    <iframe id="preview" style="width: 100%; height: 500px; border: 1px solid #ccc;"></iframe>
+</body>
+</html>

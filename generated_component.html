@@ -1,0 +1,161 @@
+# Web Component: Botón de Descarga Rojo con Efecto Hover
+
+Here's a custom web component for a red download button with a hover effect that makes it larger:
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botón de Descarga Rojo</title>
+    <style>
+        /* Estilos base del componente */
+        red-download-button {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <template id="red-download-button-template">
+        <style>
+            .download-button {
+                background-color: #e74c3c; /* Rojo */
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: bold;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                position: relative;
+                overflow: hidden;
+            }
+
+            .download-button:hover {
+                transform: scale(1.1); /* Efecto de agrandamiento */
+                background-color: #c0392b; /* Rojo más oscuro al hacer hover */
+                box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            }
+
+            .download-button:active {
+                transform: scale(0.98);
+            }
+
+            .download-icon {
+                margin-right: 8px;
+                width: 18px;
+                height: 18px;
+            }
+        </style>
+        <button class="download-button">
+            <svg class="download-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+            <span class="button-text">Descargar</span>
+        </button>
+    </template>
+
+    <script>
+        class RedDownloadButton extends HTMLElement {
+            constructor() {
+                super();
+                
+                // Crear shadow DOM
+                const shadow = this.attachShadow({mode: 'open'});
+                
+                // Obtener el template
+                const template = document.getElementById('red-download-button-template');
+                const templateContent = template.content;
+                
+                // Clonar y añadir el template al shadow DOM
+                shadow.appendChild(templateContent.cloneNode(true));
+                
+                // Obtener referencia al botón
+                this.button = shadow.querySelector('.download-button');
+                
+                // Manejar el evento de click
+                this.button.addEventListener('click', () => {
+                    this.dispatchEvent(new CustomEvent('download-click', {
+                        bubbles: true,
+                        composed: true
+                    }));
+                });
+            }
+            
+            // Método para cambiar el texto del botón
+            setButtonText(text) {
+                const textSpan = this.shadowRoot.querySelector('.button-text');
+                if (textSpan) {
+                    textSpan.textContent = text;
+                }
+            }
+            
+            // Observar cambios en el atributo "text"
+            static get observedAttributes() {
+                return ['text'];
+            }
+            
+            attributeChangedCallback(name, oldValue, newValue) {
+                if (name === 'text') {
+                    this.setButtonText(newValue);
+                }
+            }
+        }
+
+        // Registrar el componente
+        customElements.define('red-download-button', RedDownloadButton);
+    </script>
+
+    <!-- Ejemplo de uso -->
+    <h2>Ejemplo del botón:</h2>
+    <red-download-button></red-download-button>
+    
+    <script>
+        // Escuchar el evento personalizado
+        document.querySelector('red-download-button').addEventListener('download-click', () => {
+            alert('¡Descarga iniciada!');
+        });
+    </script>
+</body>
+</html>
+```
+
+## Características del componente:
+
+1. **Diseño visual**:
+   - Color rojo (#e74c3c) con un tono más oscuro al hacer hover (#c0392b)
+   - Incluye un icono de descarga SVG integrado
+   - Texto "Descargar" por defecto
+
+2. **Efecto hover**:
+   - El botón se escala a 1.1 veces su tamaño original (transform: scale(1.1))
+   - Sombra más pronunciada
+   - Transición suave de 0.3 segundos
+
+3. **Funcionalidad**:
+   - Emite un evento personalizado 'download-click' cuando se presiona
+   - Permite cambiar el texto del botón mediante el atributo "text" o el método setButtonText()
+
+4. **Uso**:
+```html
+<!-- Uso básico -->
+<red-download-button></red-download-button>
+
+<!-- Con texto personalizado -->
+<red-download-button text="Descargar archivo"></red-download-button>
+
+<!-- Escuchando el evento -->
+<script>
+    document.querySelector('red-download-button').addEventListener('download-click', () => {
+        // Lógica de descarga aquí
+    });
+</script>
+```
+
+Puedes personalizar aún más este componente añadiendo más atributos para controlar el color, tamaño, o cualquier otra propiedad visual.
